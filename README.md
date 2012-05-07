@@ -22,6 +22,16 @@ var lazyloader = $('#container').lazyload({
 
 ## Basic Options
 
+The options below can be passed into the `$.lazyload` constructor, or set dynamically through the `settings` property, e.g.
+
+```javascript
+var lazyloader = $('#container').lazyload({
+    src: '/ajax-articles'
+});
+
+lazyloader.settings.autoLoad = false;
+```
+
 **autoLoad - bool, default=true**
 
 Whether or not to automatically load the next set of content. Set this to `false` if you want to trigger the `load` method yourself (see *Methods* section below).
@@ -40,31 +50,81 @@ Setting the `debug` option to `true` will enable some console logging.
 
 ## Advanced Options
 
-**Note:** All of the options below are functions that are called from the plugin's scope. What this means is that within these functions, `this` is an instance of `$.lazyloader`.
+**Note:** Function options marked with an asterisk \* are called from the plugin's scope. What this means is that within these functions, `this` is an instance of `$.lazyloader`. Other function options are called from the `$.lazyloader.settings` scope; you can access the `lazyloader` instance from this scope with `this.lazyloader`.
 
 **loadStart - function()**
 
+```javascript
+lazyloader.settings.loadStart = function() {
+	$('body').addClass('loading');
+};
+```
+
 Called just before the next set of content is loaded.
 
-**loadSuccess - function(data, textStatus, jqXHR)**
+**\*loadSuccess - function(data, textStatus, jqXHR)**
 
-Loads the content after a successful Ajax request. This is a [jQuery Ajax Event](http://docs.jquery.com/Ajax_Events)
+Loads the content after a successful Ajax request. If your `src` returns something other than HTML, this is where you would process it. This is a [jQuery Ajax Event](http://docs.jquery.com/Ajax_Events)
+
+```javascript
+lazyloader.settings.loadSuccess = function(data, textStatus, jqXHR) {
+	if (data.noResults) {
+		// Call the noResults method
+		this.settings.noResults();
+	}
+
+	for (x in data) {
+		// Do something with the data
+	}
+};
+```
 
 **noResults - function()**
 
 Called by `loadSuccess` when the result is empty. By default it will disable the lazy loader.
 
-**loadError - function(jqXHR, textStatus, errorThrown)**
+```javascript
+lazyloader.settings.noResults = function() {
+	this.lazyloader.disable();
+};
+```
+
+**\*loadError - function(jqXHR, textStatus, errorThrown)**
 
 Called when the Ajax call fails. This is a [jQuery Ajax Event](http://docs.jquery.com/Ajax_Events)
 
-**loadComplete - function(jqXHR, textStatus)**
+```javascript
+lazyloader.settings.loadError = function() {
+	// Error handling goes here
+};
+```
+
+**\*loadComplete - function(jqXHR, textStatus)**
 
 Called when the Ajax call finishes, regardless of whether it was successful or not. This is a [jQuery Ajax Event](http://docs.jquery.com/Ajax_Events)
 
+```javascript
+lazyloader.settings.loadError = function() {
+	$('body').removeClass('loading');
+};
+```
+
 **loadHandler - function()**
 
-This function is called when `scrollThreshold` is reached, and should handle all of the content loading. If the default behaviour doesn't fit your needs, you can specify your own `loadHandler` function. Note that if a new `loadHandler` is specified, the default `loadSuccess`, `noResults`, `loadError` and `loadComplete` will not be called.
+Called when `scrollThreshold` is reached, or when `$.lazyload.load` is called. This function is where you can completely override the default lazy-load behaviour to retrieve, process, and insert content into the page. Note that if you provide a custom `loadHandler`, the `loadSuccess`, `noResults`, `loadError` and `loadComplete` options are not required.
+
+```javascript
+$.ajax({
+    type: 'POST',
+    url: 'http://example.com/more-content-plz',
+    data {
+    	i_want: 'some content'
+	},
+    success: function(data) {
+    	// Do something with data
+    },
+});
+```
 
 ## Methods
 
