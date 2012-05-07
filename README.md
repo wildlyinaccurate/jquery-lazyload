@@ -7,7 +7,7 @@ jQuery Lazy Loader is a small jQuery plugin that aims to simplify the process of
 
 The lazy loader works on the assumption that your content would otherwise be paginated. The default settings assume that the initially loaded content is page 1, and that extra content will be loaded on a per-page basis.
 
-With that in mind, the lazy loader can be used by specifying just the `src` option. When the user scrolls 80% of the way down the container, the plugin will make an Ajax (GET) call to `src` with `page = 2`. The results of the Ajax call will then be appended to the container. The `page` variable is automatically incremented after each call.
+With that in mind, the lazy loader can be used with its default settings by specifying just the `src` option. When the user scrolls 80% of the way down the container, the plugin will make an Ajax (GET) call to `src?page=2`. The results of the Ajax call will then be appended to the container. The `page` variable is automatically incremented after each call.
 
 ```html
 <section id="container">
