@@ -1,7 +1,7 @@
 jQuery Lazy Loader
 ===============
 
-jQuery Lazy Loader is a small jQuery plugin that aims to simplify the process of lazy-loading vertical content.
+jQuery Lazy Loader is a small jQuery plugin that aims to simplify the process of lazy-loading vertical content. To see the plugin in action, see [http://magicrainbowadventure.com](http://magicrainbowadventure.com)
 
 ## Basic Usage
 
@@ -104,7 +104,7 @@ lazyloader.settings.loadError = function() {
 Called when the Ajax call finishes, regardless of whether it was successful or not. This is a [jQuery Ajax Event](http://docs.jquery.com/Ajax_Events)
 
 ```javascript
-lazyloader.settings.loadError = function() {
+lazyloader.settings.loadComplete = function() {
 	$('body').removeClass('loading');
 };
 ```
@@ -114,16 +114,18 @@ lazyloader.settings.loadError = function() {
 Called when `scrollThreshold` is reached, or when `$.lazyload.load` is called. This function is where you can completely override the default lazy-load behaviour to retrieve, process, and insert content into the page. Note that if you provide a custom `loadHandler`, the `loadSuccess`, `noResults`, `loadError` and `loadComplete` options are not required.
 
 ```javascript
-$.ajax({
-    type: 'POST',
-    url: 'http://example.com/more-content-plz',
-    data {
-    	i_want: 'some content'
-	},
-    success: function(data) {
-    	// Do something with data
-    },
-});
+lazyloader.settings.loadHandler = function() {
+	$.ajax({
+		type: 'POST',
+		url: 'http://example.com/more-content-plz',
+		data {
+			i_want: 'some content'
+		},
+		success: function(data) {
+			// Do something with data
+		},
+	});
+};
 ```
 
 ## Methods
@@ -132,24 +134,24 @@ To use the methods below, assign the return value of `$.lazyload` to a local var
 
 ```javascript
 var lazyloader = $('#container').lazyload({
-    src: '/ajax-articles'
+	src: '/ajax-articles'
 });
 
 lazyloader.disable();
 ```
 
-**load**
+**load()**
 
 Loads the next set of content, regardless of the current scroll position. This could be bound to the click event of a button. Also see the `autoLoad` option.
 
-**disable**
+**disable()**
 
 Prevents the `load` method from firing.
 
-**enable**
+**enable()**
 
 Allows the `load` method to fire again.
 
-**destroy**
+**destroy()**
 
 Removes all circular references inside the `lazyloader` object, allowing Javascript's garbage collection to remove it from memory.
